@@ -186,11 +186,8 @@ def replicable_class(rep_str: str) -> str:
 def note_card_html(note: dict, track: str, i: int) -> str:
     stats = note["stats"]
     save_cls = save_rate_class(note.get("save_rate", ""))
-    rep_raw = note.get("replicable", "")
-    rep_cls = replicable_class(note.get("save_rate", "") + rep_raw)
 
     stars = " ★" if save_cls == "high" else ""
-    rep_label = ""
     # Parse replicable from save_rate field which often includes it
     sr = note.get("save_rate", "")
     m = re.search(r"\[(.+?)\]", sr)
@@ -205,12 +202,17 @@ def note_card_html(note: dict, track: str, i: int) -> str:
     save_display = save_display.group(1).strip() if save_display else sr
 
     lessons_html = "".join(f"<li>{esc(l)}</li>" for l in note.get("lessons", []))
-    tags_html = "".join(f'<span class="tag">{esc(t)}</span>' for t in note.get("tags", [])[:5])
 
-    cover_html = f'<div class="note-cover"><img src="{esc(note.get("cover_url",""))}" alt="" loading="lazy" onerror="this.parentElement.style.display=\'none\'"></div>' if note.get("cover_url") else ""
+    # Cover image or placeholder
+    cover_url = note.get("cover_url", "")
+    track_emoji = "🎾" if track == "网球" else "📸"
+    cover_html = f'<img class="note-cover" src="{esc(cover_url)}" alt="封面" loading="lazy">' if cover_url else f'<div class="note-cover note-cover-placeholder">{track_emoji}</div>'
+
+    # Alternating card class
+    alt_class = " note-card-alt" if i % 2 == 1 else ""
 
     return f'''
-    <div class="note-card">
+    <div class="note-card{alt_class}">
       {cover_html}
       <div class="note-num">{esc(track)} · {note["num"]:02d}</div>
       <h2 class="note-title">{esc(note["title"])}</h2>
@@ -219,16 +221,12 @@ def note_card_html(note: dict, track: str, i: int) -> str:
         <span>关键词：{esc(note.get("keyword",""))}</span>
       </div>
       <div class="note-stats">
-        <div class="stat">👍 <span>{esc(stats.get("likes","—"))}</span></div>
         <div class="stat">⭐ <span>{esc(stats.get("saves","—"))}</span></div>
-        <div class="stat">💬 <span>{esc(stats.get("comments","—"))}</span></div>
-        <div class="stat">↗ <span>{esc(stats.get("shares","—"))}</span></div>
+        <div class="stat">👍 <span>{esc(stats.get("likes","—"))}</span></div>
       </div>
       <div class="tags-row">
         <span class="tag {save_cls}">收藏率 {esc(save_display)}{stars}</span>
         {f'<span class="tag {rep_cls2}">{esc(rep_label)}</span>' if rep_label else ""}
-        {f'<span class="tag">{esc(note.get("form",""))}</span>' if note.get("form") else ""}
-        {tags_html}
       </div>
       {"<div class='lessons-box'><h4>今天可学</h4><ul>" + lessons_html + "</ul></div>" if lessons_html else ""}
     </div>'''

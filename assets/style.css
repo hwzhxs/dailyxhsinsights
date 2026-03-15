@@ -194,7 +194,7 @@ main { padding: 100px 0 160px; }
   border-bottom-color: var(--bg);
   font-weight: 500;
 }
-.tab-panel { display: none; }
+.tab-panel { display: none; padding-top: 40px; }
 .tab-panel.active { display: block; }
 
 /* Today's signal row */
@@ -203,7 +203,7 @@ main { padding: 100px 0 160px; }
   color: var(--dark-text);
   border-radius: 10px;
   padding: 24px 28px;
-  margin-bottom: 56px;
+  margin-bottom: 80px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   line-height: 1.8;
@@ -212,15 +212,17 @@ main { padding: 100px 0 160px; }
 .track-signal strong { color: rgba(247,236,217,0.8); font-weight: 500; }
 
 /* Note cards */
-.notes-grid { display: grid; gap: 48px; }
+.notes-grid { display: grid; gap: 120px; }
 .note-card {
   background: var(--bg2);
   border: none;
+  border-left: 4px solid var(--accent);
   border-radius: 16px;
   padding: 36px 40px;
   transition: all 0.7s var(--ease);
   box-shadow: 0 2px 24px rgba(93,82,75,0.07);
 }
+.note-card-alt { background: var(--bg3); }
 .note-card:hover {
   box-shadow: 0 8px 48px rgba(93,82,75,0.14);
 }
@@ -256,7 +258,7 @@ main { padding: 100px 0 160px; }
   padding: 12px 16px;
   background: var(--bg);
   border-radius: 8px;
-  border: 1px solid var(--border);
+  border: none;
 }
 .stat {
   font-family: var(--font-mono);
@@ -419,16 +421,21 @@ main { padding: 100px 0 160px; }
 
 /* Note cover image */
 .note-cover {
-  margin: -36px -40px 28px;
-  border-radius: 16px 16px 0 0;
-  overflow: hidden;
-  height: 220px;
-}
-.note-cover img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 3/4;
+  max-height: 280px;
   object-fit: cover;
-  display: block;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background: var(--bg3);
+}
+.note-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--text-light);
+  background: linear-gradient(145deg, var(--bg3), var(--bg4));
 }
 
 /* Animations */
