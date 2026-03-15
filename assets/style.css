@@ -417,6 +417,20 @@ main { padding: 100px 0 160px; }
   letter-spacing: 0.04em;
 }
 
+/* Note cover image */
+.note-cover {
+  margin: -36px -40px 28px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  height: 220px;
+}
+.note-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 /* Animations */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }

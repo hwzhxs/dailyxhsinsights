@@ -103,7 +103,7 @@ def parse_report(md_path: Path) -> dict:
             current_note = {
                 "num": int(m.group(1)),
                 "title": m.group(2).strip(),
-                "blogger": "", "keyword": "",
+                "blogger": "", "keyword": "", "cover_url": "",
                 "stats": {}, "save_rate": "", "replicable": "",
                 "form": "", "title_struct": "",
                 "tags": [], "template": "", "lessons": []
@@ -122,6 +122,8 @@ def parse_report(md_path: Path) -> dict:
         # Note fields
         if line.startswith("- 博主："):
             current_note["blogger"] = line[4:].strip()
+        elif line.startswith("- 封面图："):
+            current_note["cover_url"] = line[6:].strip()
         elif line.startswith("- 来源关键词："):
             current_note["keyword"] = line[7:].strip()
         elif line.startswith("- 互动信号："):
@@ -205,8 +207,11 @@ def note_card_html(note: dict, track: str, i: int) -> str:
     lessons_html = "".join(f"<li>{esc(l)}</li>" for l in note.get("lessons", []))
     tags_html = "".join(f'<span class="tag">{esc(t)}</span>' for t in note.get("tags", [])[:5])
 
+    cover_html = f'<div class="note-cover"><img src="{esc(note.get("cover_url",""))}" alt="" loading="lazy" onerror="this.parentElement.style.display=\'none\'"></div>' if note.get("cover_url") else ""
+
     return f'''
     <div class="note-card">
+      {cover_html}
       <div class="note-num">{esc(track)} · {note["num"]:02d}</div>
       <h2 class="note-title">{esc(note["title"])}</h2>
       <div class="note-meta">
