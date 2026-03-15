@@ -128,7 +128,7 @@ main { padding: 100px 0 160px; }
 .cal-sidebar .cal-day.empty { color: #D0C4BB; }
 @media (max-width: 900px) {
   .page-layout { grid-template-columns: 1fr; }
-  .cal-sidebar { position: static; }
+  .cal-sidebar { position: static; order: -1; margin-bottom: 24px; }
 }
 
 /* Page title row */
