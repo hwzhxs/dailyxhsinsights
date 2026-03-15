@@ -90,7 +90,7 @@ main { padding: 100px 0 160px; }
 .page-layout {
   display: grid;
   grid-template-columns: 1fr 280px;
-  gap: 28px;
+  gap: 200px;
   align-items: start;
 }
 .page-main { min-width: 0; order: 1; }
@@ -155,7 +155,7 @@ main { padding: 100px 0 160px; }
 /* Date index cards */
 .date-grid { display: grid; gap: 20px; }
 .date-card {
-  background: var(--bg2);
+  background: #FFFFFF;
   border: none;
   border-radius: 12px;
   padding: 32px 40px;
@@ -262,16 +262,16 @@ main { padding: 100px 0 160px; }
 .track-signal strong { color: #2A1816; font-weight: 500; }
 
 /* Note cards */
-.notes-grid { display: grid; gap: 120px; }
+.notes-grid { display: grid; gap: 32px; }
 .note-card {
-  background: var(--bg2);
+  background: #ffffff;
   border: none;
   border-radius: 16px;
   padding: 36px 40px;
   transition: all 0.7s var(--ease);
   box-shadow: 0 2px 24px rgba(93,82,75,0.07);
 }
-.note-card-alt { background: var(--bg3); }
+.note-card-alt { background: #ffffff; }
 .note-card:hover {
   box-shadow: 0 8px 48px rgba(93,82,75,0.14);
 }
