@@ -517,19 +517,22 @@ def build_index(dates: list[str]) -> str:
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def git_push(site_dir: Path, date_str: str):
+    ssh_cmd = "ssh -i ~/.ssh/id_ed25519_xhs -p 443 -o StrictHostKeyChecking=no"
+    push_remote = "git@ssh.github.com:hwzhxs/dailyxhsinsights.git"
+    env = {**os.environ, "GIT_SSH_COMMAND": ssh_cmd}
     cmds = [
-        ["git", "-C", str(site_dir), "add", "-A"],
-        ["git", "-C", str(site_dir), "commit", "-m", f"feat: add/update {date_str} report"],
-        ["git", "-C", str(site_dir), "push", "--set-upstream", "origin", "main"],
+        (["git", "-C", str(site_dir), "add", "-A"], {}),
+        (["git", "-C", str(site_dir), "commit", "-m", f"feat: add/update {date_str} report"], {}),
+        (["git", "-C", str(site_dir), "push", push_remote, "HEAD:main"], {"env": env}),
     ]
-    for cmd in cmds:
-        r = subprocess.run(cmd, capture_output=True, text=True)
+    for cmd, kwargs in cmds:
+        r = subprocess.run(cmd, capture_output=True, text=True, **kwargs)
         print(r.stdout.strip())
         if r.returncode != 0:
             print(f"WARN: {r.stderr.strip()}")
             if "nothing to commit" in r.stderr or "nothing to commit" in r.stdout:
                 continue
-            if cmd[3] == "push":
+            if "push" in cmd:
                 raise RuntimeError(f"Push failed: {r.stderr.strip()}")
 
 
