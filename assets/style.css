@@ -32,7 +32,7 @@ body {
   color: var(--text);
   font-family: var(--font-serif);
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.75;
   min-height: 100vh;
 }
 
@@ -50,7 +50,7 @@ body {
 .site-header .container { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .site-title {
   font-family: var(--font-serif);
-  font-size: 2.4rem;
+  font-size: 3rem;
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.1;
@@ -84,16 +84,16 @@ body {
 }
 
 /* Main */
-main { padding: 64px 0 100px; }
+main { padding: 100px 0 160px; }
 
 /* Page title row */
 .page-header { margin-bottom: 48px; }
 .page-header h1 {
   font-family: var(--font-serif);
-  font-size: 3rem;
+  font-size: 4.5rem;
   font-weight: 500;
   letter-spacing: -0.04em;
-  line-height: 1.1;
+  line-height: 1.05;
   color: var(--text);
 }
 .page-header .date-label {
@@ -109,9 +109,9 @@ main { padding: 64px 0 100px; }
 .date-grid { display: grid; gap: 20px; }
 .date-card {
   background: var(--bg2);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 12px;
-  padding: 28px 32px;
+  padding: 32px 40px;
   text-decoration: none;
   color: var(--text);
   display: flex;
@@ -119,12 +119,11 @@ main { padding: 64px 0 100px; }
   justify-content: space-between;
   gap: 20px;
   transition: all 0.7s var(--ease);
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 24px rgba(93,82,75,0.07);
 }
 .date-card:hover {
   background: var(--bg3);
-  border-color: var(--border-mid);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 8px 48px rgba(93,82,75,0.14);
   transform: translateY(-2px);
 }
 .date-card-left {}
@@ -153,8 +152,9 @@ main { padding: 64px 0 100px; }
   letter-spacing: 0.04em;
 }
 .date-card-arrow {
-  font-size: 1.4rem;
-  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--text-light);
   transition: transform 0.6s var(--ease);
   flex-shrink: 0;
 }
@@ -202,28 +202,27 @@ main { padding: 64px 0 100px; }
   background: var(--dark);
   color: var(--dark-text);
   border-radius: 10px;
-  padding: 20px 24px;
-  margin-bottom: 32px;
+  padding: 24px 28px;
+  margin-bottom: 56px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  line-height: 1.7;
+  line-height: 1.8;
   letter-spacing: 0.02em;
 }
 .track-signal strong { color: rgba(247,236,217,0.8); font-weight: 500; }
 
 /* Note cards */
-.notes-grid { display: grid; gap: 24px; }
+.notes-grid { display: grid; gap: 48px; }
 .note-card {
   background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 32px;
+  border: none;
+  border-radius: 16px;
+  padding: 36px 40px;
   transition: all 0.7s var(--ease);
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 24px rgba(93,82,75,0.07);
 }
 .note-card:hover {
-  border-color: var(--border-mid);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 8px 48px rgba(93,82,75,0.14);
 }
 .note-num {
   font-family: var(--font-mono);
@@ -270,8 +269,8 @@ main { padding: 64px 0 100px; }
 .tags-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .tag {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  padding: 3px 9px;
+  font-size: 0.58rem;
+  padding: 2px 8px;
   border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--bg4);
@@ -326,11 +325,11 @@ main { padding: 64px 0 100px; }
 
 /* Methodology block */
 .methodology {
-  margin-top: 40px;
+  margin-top: 64px;
   background: var(--dark);
   color: var(--dark-text);
   border-radius: 12px;
-  padding: 32px 36px;
+  padding: 40px 44px;
 }
 .methodology h3 {
   font-family: var(--font-serif);
@@ -431,11 +430,11 @@ main { padding: 64px 0 100px; }
 .note-card:nth-child(5) { animation-delay: 0.33s; }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .site-title { font-size: 1.8rem; }
-  .page-header h1 { font-size: 2rem; }
-  .note-card { padding: 20px; }
+  @media (max-width: 768px) {
+  .site-title { font-size: 2rem; }
+  .page-header h1 { font-size: 2.8rem; }
+  .note-card { padding: 24px; }
   .tab-btn { padding: 8px 14px; font-size: 0.72rem; }
-  .methodology { padding: 24px; }
-  .date-card { flex-direction: column; align-items: flex-start; }
+  .methodology { padding: 28px 24px; }
+  .date-card { flex-direction: column; align-items: flex-start; padding: 24px; }
 }
