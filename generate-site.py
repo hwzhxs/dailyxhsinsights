@@ -302,6 +302,7 @@ def build_daily_page(report: dict) -> str:
 def build_index(dates: list[str]) -> str:
     """Build index.html listing all dates newest first."""
     cards = ""
+    dates_js = ", ".join(f'"{d}"' for d in sorted(dates, reverse=True))
     for d in sorted(dates, reverse=True):
         try:
             dt = datetime.strptime(d, "%Y-%m-%d")
@@ -334,6 +335,9 @@ def build_index(dates: list[str]) -> str:
       <p class="date-label">按日期倒序 · 自动更新</p>
     </div>
     <div class="date-grid">{cards}</div>
+    <script>
+    const AVAILABLE_DATES = [{dates_js}];
+    </script>
 '''
     return head + body + foot
 
