@@ -71,6 +71,8 @@ def parse_report(md_path: Path) -> dict:
     current_track = None
     current_note = None
     in_lessons = False
+    in_methodology = False
+    in_methodology = False
 
     for line in text.splitlines():
         # Track header  ## 时尚 / ## 穿搭 / ## 网球
@@ -80,6 +82,7 @@ def parse_report(md_path: Path) -> dict:
             result["tracks"][current_track] = {"meta": {}, "notes": [], "methodology": []}
             current_note = None
             in_lessons = False
+            in_methodology = False
             continue
 
         if current_track is None:
@@ -114,9 +117,9 @@ def parse_report(md_path: Path) -> dict:
         if current_note is None:
             # Check methodology
             if line.startswith("### 本赛道今天最值得抄的方法论"):
-                if current_note:
-                    track["notes"].append(current_note)
-                    current_note = None
+                in_methodology = True
+            elif in_methodology and line.startswith("- "):
+                track["methodology"].append(line[2:].strip())
             continue
 
         # Note fields
@@ -155,8 +158,9 @@ def parse_report(md_path: Path) -> dict:
                 track["notes"].append(current_note)
                 current_note = None
             in_lessons = False
+            in_methodology = True
 
-        if current_note is None and line.startswith("- "):
+        if in_methodology and current_note is None and line.startswith("- "):
             track["methodology"].append(line[2:].strip())
 
     # Flush last note
