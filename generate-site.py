@@ -33,17 +33,6 @@ HTML_HEAD = '''<!DOCTYPE html>
   <link rel="stylesheet" href="{css_path}">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div>
-        <h1 class="site-title">XHS Daily Insights</h1>
-        <p class="site-subtitle">每日小红书内容分析 · 时尚 / 穿搭 / 网球</p>
-      </div>
-      <nav class="header-nav">
-        <a href="{index_path}" class="nav-link">← 全部日期</a>
-      </nav>
-    </div>
-  </header>
   <main><div class="container">
 '''
 
