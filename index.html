@@ -1,50 +1,48 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XHS Daily Insights</title>
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XHS Daily Insights — 每日小红书学习报告</title>
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-
-<nav>
-  <a href="index.html" class="logo">XHS Insights</a>
-  <span class="nav-title">小红书每日学习报告</span>
-</nav>
-
-<section class="hero">
-  <div class="eyebrow">Daily Intelligence</div>
-  <h1>小红书<em>内容情报</em><br>每日学习报告</h1>
-  <p>时尚 · 穿搭 · 网球 · 三赛道高信号内容提炼</p>
-</section>
-
-<div class="container">
-  <section class="section">
-    <div class="section-label">归档 Archive</div>
-    <div class="date-grid">
-
-      <!-- 2026-03-15 -->
-      <a href="daily/2026-03-15.html" class="date-card">
-        <div class="date-label">2026-03-15 · Sunday</div>
-        <h2>审美判断 + 资料感整理<br>整套可抄作业方案</h2>
-        <p class="methodology">
-          时尚：标题先抛出趋势/风格判断，正文给风格标签、对照案例和可复看的视觉结论。
-        </p>
-        <div class="badges">
-          <span class="badge fashion">时尚 5篇</span>
-          <span class="badge outfit">穿搭 5篇</span>
-          <span class="badge tennis">网球 5篇</span>
-        </div>
-      </a>
-
+  <header class="site-header">
+    <div class="container">
+      <div>
+        <h1 class="site-title">XHS Daily Insights</h1>
+        <p class="site-subtitle">每日小红书内容分析 · 时尚 / 穿搭 / 网球</p>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">全部日期</a>
+      </nav>
     </div>
-  </section>
-</div>
-
-<footer>
-  XHS Daily Insights · 自动生成 · 仅供内部学习使用
-</footer>
-
+  </header>
+  <main>
+    <div class="container">
+      <div class="page-header">
+        <h1>每日报告</h1>
+        <p class="date-label">按日期倒序 · 自动更新</p>
+      </div>
+      <div class="date-grid">
+        <a href="daily/2026-03-15.html" class="date-card">
+          <div class="date-card-left">
+            <div class="date-card-date">2026年3月15日</div>
+            <div class="date-card-meta">时尚 5条 · 穿搭 5条 · 网球 5条 · 共15篇笔记</div>
+            <div class="date-card-tracks">
+              <span class="track-badge">时尚</span>
+              <span class="track-badge">穿搭</span>
+              <span class="track-badge">网球</span>
+            </div>
+            <div class="date-card-meta" style="margin-top:10px">今日方法论：文字卡+4图打法最强，整套可抄方案收藏率 68%+</div>
+          </div>
+          <div class="date-card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">XHS Daily Insights · 数据来源 xiaohongshu-mcp · 仅供学习研究</div>
+  </footer>
 </body>
 </html>
