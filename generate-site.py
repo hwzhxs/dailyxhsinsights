@@ -183,7 +183,75 @@ def replicable_class(rep_str: str) -> str:
     return "high"
 
 
+CAL_STYLES = '''
+  <style>
+    .cal-toggle {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: rgba(247,236,217,0.7); background: rgba(247,236,217,0.08);
+      border: 1px solid rgba(247,236,217,0.18); border-radius: 30px;
+      padding: 8px 18px; cursor: pointer; transition: all 0.4s;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .cal-toggle:hover { background: rgba(247,236,217,0.15); color: rgba(247,236,217,0.9); }
+    .cal-panel {
+      display: none; position: absolute; top: calc(100% + 12px); right: 0;
+      background: #fff9f0; border: 1px solid rgba(93,82,75,0.15); border-radius: 16px;
+      padding: 20px; box-shadow: 0 12px 48px rgba(42,24,22,0.18); z-index: 100; min-width: 300px;
+    }
+    .cal-panel.open { display: block; }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cal-month { font-family: var(--font-serif); font-size: 1rem; font-weight: 500; color: #2A1816; }
+    .cal-nav { background: none; border: none; cursor: pointer; font-size: 1rem; color: #8B7D74; padding: 4px 10px; border-radius: 8px; transition: all 0.3s; }
+    .cal-nav:hover { background: #F5EEE0; color: #2A1816; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-day-name { font-family: var(--font-mono); font-size: 0.6rem; color: #8B7D74; text-align: center; padding: 4px 0; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.7rem; border-radius: 8px; color: #8B7D74; position: relative; }
+    .cal-day.has-content { color: #2A1816; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .cal-day.has-content::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #A67C52; border-radius: 50%; }
+    .cal-day.has-content:hover { background: #A67C52; color: #fff; }
+    .cal-day.has-content:hover::after { background: #fff; }
+    .cal-day.today-mark { outline: 2px solid #A67C52; outline-offset: 2px; }
+    .cal-day.empty { color: #D0C4BB; }
+  </style>'''
+
+CAL_SCRIPT = '''  <script>
+    const AVAILABLE_DATES_CAL = {dates_js};
+    const dateSet = new Set(AVAILABLE_DATES_CAL);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (dateSet.has(todayStr)) {{ window.location.replace("daily/" + todayStr + ".html"); }}
+    const toggle = document.getElementById("calToggle");
+    const panel = document.getElementById("calPanel");
+    let calDate = new Date();
+    toggle && toggle.addEventListener("click", (e) => {{ e.stopPropagation(); panel.classList.toggle("open"); if (panel.classList.contains("open")) renderCal(); }});
+    document.addEventListener("click", () => panel && panel.classList.remove("open"));
+    panel && panel.addEventListener("click", e => e.stopPropagation());
+    function renderCal() {{
+      const year = calDate.getFullYear(), month = calDate.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
+      let html = '<div class="cal-header"><button class="cal-nav" onclick="prevMonth()">\\u2039</button><span class="cal-month">' + year + '年' + months[month] + '</span><button class="cal-nav" onclick="nextMonth()">\\u203a</button></div><div class="cal-grid">';
+      ["日","一","二","三","四","五","六"].forEach(d => html += '<div class="cal-day-name">' + d + '</div>');
+      for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {{
+        const pad = String(d).padStart(2,"0"), padM = String(month+1).padStart(2,"0");
+        const ds = year + "-" + padM + "-" + pad;
+        const isToday = ds === todayStr;
+        html += dateSet.has(ds)
+          ? '<a href="daily/' + ds + '.html" class="cal-day has-content' + (isToday ? ' today-mark' : '') + '">' + d + '</a>'
+          : '<div class="cal-day' + (isToday ? ' today-mark' : '') + '">' + d + '</div>';
+      }}
+      panel.innerHTML = html + '</div>';
+    }}
+    function prevMonth() {{ calDate.setMonth(calDate.getMonth()-1); renderCal(); }}
+    function nextMonth() {{ calDate.setMonth(calDate.getMonth()+1); renderCal(); }}
+  </script>'''
+
+
 def note_card_html(note: dict, track: str, i: int) -> str:
+
+
     stats = note["stats"]
     save_cls = save_rate_class(note.get("save_rate", ""))
 
@@ -327,8 +395,20 @@ def build_index(dates: list[str]) -> str:
         title="XHS Daily Insights — 每日小红书学习报告",
         css_path="assets/style.css",
         index_path="index.html"
+    ).replace(
+        '</head>',
+        CAL_STYLES + '\n</head>'
+    ).replace(
+        '<nav class="header-nav">',
+        '<nav class="header-nav" style="position:relative">'
+    ).replace(
+        '<a href="index.html" class="nav-link">← 全部日期</a>',
+        '<button class="cal-toggle" id="calToggle"><i style="font-style:normal">📅</i> 选择日期</button><div class="cal-panel" id="calPanel"></div>'
     )
-    foot = HTML_FOOT.format(js_path="assets/main.js")
+    foot = HTML_FOOT.format(js_path="assets/main.js").replace(
+        '</body>',
+        CAL_SCRIPT.format(dates_js=f'[{dates_js}]') + '\n</body>'
+    )
     body = f'''
     <div class="page-header">
       <h1>每日报告</h1>
