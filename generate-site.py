@@ -273,8 +273,7 @@ def note_card_html(note: dict, track: str, i: int) -> str:
 
     # Cover image or placeholder
     cover_url = note.get("cover_url", "")
-    track_emoji = "🎾" if track == "网球" else "📸"
-    cover_html = f'<img class="note-cover" src="{esc(cover_url)}" alt="封面" loading="lazy">' if cover_url else f'<div class="note-cover note-cover-placeholder">{track_emoji}</div>'
+    cover_html = f'<img class="note-cover" src="{esc(cover_url)}" alt="封面" loading="lazy">' if cover_url else ''
 
     # Alternating card class
     alt_class = " note-card-alt" if i % 2 == 1 else ""
@@ -322,7 +321,91 @@ def track_panel_html(track_name: str, track_data: dict) -> str:
         </div>'''
 
 
-def build_daily_page(report: dict) -> str:
+def build_daily_page(report: dict, all_dates: list = None) -> str:
+    date_str = report["date"]
+    try:
+        d = datetime.strptime(date_str, "%Y-%m-%d")
+        date_cn = f"{d.year}年{d.month}月{d.day}日"
+    except Exception:
+        date_cn = date_str
+
+    tab_nav = "".join(
+        f'<button class="tab-btn{" active" if i==0 else ""}" data-tab="{TRACK_IDS[t]}">{esc(t)}</button>'
+        for i, t in enumerate(TRACKS) if t in report["tracks"]
+    )
+
+    panels = "".join(
+        track_panel_html(t, report["tracks"][t])
+        for i, t in enumerate(TRACKS) if t in report["tracks"]
+    )
+    # Set first panel active
+    panels = panels.replace('class="tab-panel"', 'class="tab-panel active"', 1)
+
+    head = HTML_HEAD.format(
+        title=date_cn,
+        css_path="../assets/style.css",
+        index_path="../index.html"
+    )
+    foot = HTML_FOOT.format(js_path="../assets/main.js")
+
+    # Calendar sidebar
+    dates_js = ", ".join(f'"{x}"' for x in sorted(all_dates or [date_str], reverse=True))
+    sidebar = f'''
+    <aside class="cal-sidebar">
+      <div class="cal-sidebar-title">浏览历史</div>
+      <div id="calSidebar"></div>
+    </aside>'''
+    sidebar_script = f'''  <script>
+    (function() {{
+      const DATES = [{dates_js}];
+      const dateSet = new Set(DATES);
+      let calDate = new Date();
+      function render() {{
+        const year = calDate.getFullYear(), month = calDate.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
+        let html = '<div class="cal-header"><button class="cal-nav" onclick="prevM()">\u2039</button><span class="cal-month">' + year + '年' + months[month] + '</span><button class="cal-nav" onclick="nextM()">\u203a</button></div><div class="cal-grid">';
+        ['日','一','二','三','四','五','六'].forEach(d => html += '<div class="cal-day-name">' + d + '</div>');
+        for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+        for (let d = 1; d <= daysInMonth; d++) {{
+          const pad = String(d).padStart(2,'0'), padM = String(month+1).padStart(2,'0');
+          const ds = year + '-' + padM + '-' + pad;
+          const isToday = ds === todayStr;
+          html += dateSet.has(ds)
+            ? '<a href="../daily/' + ds + '.html" class="cal-day has-content' + (isToday ? ' today-mark' : '') + '">' + d + '</a>'
+            : '<div class="cal-day' + (isToday ? ' today-mark' : '') + '">' + d + '</div>';
+        }}
+        document.getElementById('calSidebar').innerHTML = html + '</div>';
+      }}
+      window.prevM = function() {{ calDate.setMonth(calDate.getMonth()-1); render(); }};
+      window.nextM = function() {{ calDate.setMonth(calDate.getMonth()+1); render(); }};
+      render();
+    }})();
+  </script>'''
+
+    body = f'''
+    <div class="page-layout">
+      <div class="page-main">
+        <div class="date-nav">
+          <span></span>
+          <span class="current-date">{esc(date_cn)}</span>
+          <span></span>
+        </div>
+        <div class="page-header">
+          <h1>{esc(d.strftime("%m月%d日") if "d" in dir() else date_cn)}报告</h1>
+          <p class="date-label">生成时间：{esc(date_str)} · 范围：时尚 / 穿搭 / 网球</p>
+        </div>
+        <div class="track-tabs">
+          <div class="tab-nav">{tab_nav}</div>
+          {panels}
+        </div>
+      </div>
+      {sidebar}
+    </div>
+'''
+    return head + body + foot.replace('</body>', sidebar_script + '\n</body>')
     date_str = report["date"]
     try:
         d = datetime.strptime(date_str, "%Y-%m-%d")
@@ -456,7 +539,7 @@ def main():
         for md_file in md_files:
             print(f"Building {md_file.name}...")
             report = parse_report(md_file)
-            html = build_daily_page(report)
+            html = build_daily_page(report, all_dates=[f.stem for f in md_files])
             out = DAILY_DIR / f"{md_file.stem}.html"
             out.write_text(html, encoding="utf-8")
             dates_built.append(md_file.stem)
@@ -470,11 +553,13 @@ def main():
             sys.exit(1)
         print(f"Building {args.date}...")
         report = parse_report(md_path)
-        html = build_daily_page(report)
-        out = DAILY_DIR / f"{args.date}.html"
-        out.write_text(html, encoding="utf-8")
         # Rebuild index with all existing dates
         existing = [p.stem for p in DAILY_DIR.glob("????-??-??.html")]
+        if args.date not in existing:
+            existing.append(args.date)
+        html = build_daily_page(report, all_dates=existing)
+        out = DAILY_DIR / f"{args.date}.html"
+        out.write_text(html, encoding="utf-8")
         idx = build_index(existing)
         (SITE_DIR / "index.html").write_text(idx, encoding="utf-8")
         print(f"Written {out}")

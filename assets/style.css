@@ -86,6 +86,49 @@ body {
 /* Main */
 main { padding: 100px 0 160px; }
 
+/* Two-column layout: main content + sticky calendar sidebar */
+.page-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 48px;
+  align-items: start;
+}
+.page-main { min-width: 0; }
+.cal-sidebar {
+  position: sticky;
+  top: 24px;
+  background: #fff9f0;
+  border: 1px solid rgba(93,82,75,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 24px rgba(42,24,22,0.08);
+}
+.cal-sidebar-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+.cal-sidebar .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cal-sidebar .cal-month { font-family: var(--font-serif); font-size: 0.9rem; font-weight: 500; color: #2A1816; }
+.cal-sidebar .cal-nav { background: none; border: none; cursor: pointer; font-size: 1rem; color: #8B7D74; padding: 2px 8px; border-radius: 6px; transition: all 0.3s; }
+.cal-sidebar .cal-nav:hover { background: #F5EEE0; color: #2A1816; }
+.cal-sidebar .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-sidebar .cal-day-name { font-family: var(--font-mono); font-size: 0.58rem; color: #8B7D74; text-align: center; padding: 3px 0; text-transform: uppercase; }
+.cal-sidebar .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.65rem; border-radius: 6px; color: #8B7D74; position: relative; }
+.cal-sidebar .cal-day.has-content { color: #2A1816; font-weight: 600; cursor: pointer; text-decoration: none; }
+.cal-sidebar .cal-day.has-content::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; background: #A67C52; border-radius: 50%; }
+.cal-sidebar .cal-day.has-content:hover { background: #A67C52; color: #fff; }
+.cal-sidebar .cal-day.has-content:hover::after { background: #fff; }
+.cal-sidebar .cal-day.today-mark { outline: 2px solid #A67C52; outline-offset: 1px; }
+.cal-sidebar .cal-day.empty { color: #D0C4BB; }
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr; }
+  .cal-sidebar { position: static; }
+}
+
 /* Page title row */
 .page-header { margin-bottom: 48px; }
 .page-header h1 {
@@ -219,7 +262,6 @@ main { padding: 100px 0 160px; }
 .note-card {
   background: var(--bg2);
   border: none;
-  border-left: 4px solid var(--accent);
   border-radius: 16px;
   padding: 36px 40px;
   transition: all 0.7s var(--ease);
