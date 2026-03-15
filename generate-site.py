@@ -392,6 +392,7 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
 
     body = f'''
     <div class="page-layout">
+      {sidebar}
       <div class="page-main">
         <div class="date-nav">
           <span></span>
@@ -407,7 +408,6 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
           {panels}
         </div>
       </div>
-      {sidebar}
     </div>
 '''
     return head + body + foot.replace('</body>', sidebar_script + '\n</body>')

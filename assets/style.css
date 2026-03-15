@@ -93,8 +93,9 @@ main { padding: 100px 0 160px; }
   gap: 28px;
   align-items: start;
 }
-.page-main { min-width: 0; }
+.page-main { min-width: 0; order: 1; }
 .cal-sidebar {
+  order: 2;
   position: sticky;
   top: 24px;
   background: #fff9f0;
@@ -128,7 +129,8 @@ main { padding: 100px 0 160px; }
 .cal-sidebar .cal-day.empty { color: #D0C4BB; }
 @media (max-width: 900px) {
   .page-layout { grid-template-columns: 1fr; }
-  .cal-sidebar { position: static; order: -1; margin-bottom: 24px; max-width: 360px; }
+  .page-main { order: 2; }
+  .cal-sidebar { position: static; order: 1; margin-bottom: 24px; max-width: 360px; }
 }
 
 /* Page title row */
