@@ -192,7 +192,9 @@ main { padding: 100px 0 160px; }
   color: #fff;
   border-color: var(--accent);
   border-bottom-color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+  padding: 11px 24px;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2), 0 2px 12px rgba(166,124,82,0.25);
 }
 .tab-panel { display: none; padding-top: 40px; }
 .tab-panel.active { display: block; }
@@ -329,8 +331,8 @@ main { padding: 100px 0 160px; }
 /* Methodology block */
 .methodology {
   margin-top: 64px;
-  background: var(--dark);
-  color: var(--dark-text);
+  background: #F0E4D0;
+  color: var(--text);
   border-radius: 12px;
   padding: 40px 44px;
 }
@@ -340,13 +342,13 @@ main { padding: 100px 0 160px; }
   font-weight: 500;
   letter-spacing: -0.02em;
   margin-bottom: 16px;
-  color: var(--dark-text);
+  color: var(--dark);
 }
 .methodology p, .methodology li {
   font-family: var(--font-serif);
   font-size: 0.9rem;
   line-height: 1.7;
-  color: rgba(247,236,217,0.8);
+  color: var(--text-mid);
 }
 .methodology ul { list-style: none; }
 .methodology li {
@@ -365,18 +367,130 @@ main { padding: 100px 0 160px; }
 .methodology .warn-label {
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  background: rgba(247,236,217,0.1);
-  border: 1px solid rgba(247,236,217,0.2);
+  background: rgba(166,124,82,0.1);
+  border: 1px solid rgba(166,124,82,0.3);
   border-radius: 4px;
   padding: 2px 8px;
-  color: rgba(247,236,217,0.6);
+  color: var(--accent);
   margin-right: 6px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
+/* Mini Calendar */
+.mini-calendar {
+  margin-top: 28px;
+  background: rgba(247,236,217,0.08);
+  border: 1px solid rgba(247,236,217,0.15);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: inline-block;
+  min-width: 240px;
+}
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cal-month-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: rgba(247,236,217,0.7);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cal-nav-btn {
+  background: none;
+  border: none;
+  color: rgba(247,236,217,0.5);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.3s;
+}
+.cal-nav-btn:hover { color: rgba(247,236,217,0.9); }
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+.cal-day-name {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(247,236,217,0.35);
+  padding: 2px 0 6px;
+  letter-spacing: 0.04em;
+}
+.cal-day {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: rgba(247,236,217,0.45);
+  padding: 4px 2px;
+  border-radius: 4px;
+  position: relative;
+  cursor: default;
+  transition: all 0.2s;
+}
+.cal-day.empty { color: transparent; }
+.cal-day.has-content {
+  color: rgba(247,236,217,0.9);
+  cursor: pointer;
+  font-weight: 500;
+}
+.cal-day.has-content::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin: 1px auto 0;
+}
+.cal-day.has-content:hover {
+  background: rgba(166,124,82,0.25);
+  color: #fff;
+}
+.cal-day.today {
+  color: var(--accent);
+  font-weight: 600;
+}
+.cal-day.today.has-content::after {
+  background: var(--accent);
+  width: 5px; height: 5px;
+}
+
+/* Today content injection */
+#today-content-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#today-content-header .today-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+#today-content-header a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-light);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.3s;
+}
+#today-content-header a:hover { color: var(--accent); }
+
 /* Date nav */
-.date-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;

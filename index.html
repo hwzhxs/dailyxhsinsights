@@ -12,6 +12,7 @@
       <div>
         <h1 class="site-title">XHS Daily Insights</h1>
         <p class="site-subtitle">每日小红书内容分析 · 时尚 / 穿搭 / 网球</p>
+        <div class="mini-calendar" id="mini-calendar"></div>
       </div>
       <nav class="header-nav">
         <a href="index.html" class="nav-link">← 全部日期</a>
@@ -20,47 +21,58 @@
   </header>
   <main><div class="container">
 
-    <div class="page-header">
-      <h1>每日报告</h1>
-      <p class="date-label">按日期倒序 · 自动更新</p>
+    <div id="today-content-wrapper" style="display:none;">
+      <div id="today-content-header">
+        <span class="today-label">今日报告 · Today's Report</span>
+        <a href="#" id="today-full-link">查看全页 →</a>
+      </div>
+      <div id="today-content"></div>
     </div>
-    <div class="date-grid">
-        <a href="daily/2026-03-15.html" class="date-card">
-          <div class="date-card-left">
-            <div class="date-card-date">2026年3月15日</div>
-            <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
-            <div class="date-card-tracks">
-              <span class="track-badge">时尚</span>
-              <span class="track-badge">穿搭</span>
-              <span class="track-badge">网球</span>
+
+    <div id="fallback-content">
+      <div class="page-header">
+        <h1>每日报告</h1>
+        <p class="date-label">按日期倒序 · 自动更新</p>
+      </div>
+      <div class="date-grid">
+          <a href="daily/2026-03-15.html" class="date-card">
+            <div class="date-card-left">
+              <div class="date-card-date">2026年3月15日</div>
+              <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
+              <div class="date-card-tracks">
+                <span class="track-badge">时尚</span>
+                <span class="track-badge">穿搭</span>
+                <span class="track-badge">网球</span>
+              </div>
             </div>
-          </div>
-          <div class="date-card-arrow">→</div>
-        </a>
-        <a href="daily/2026-03-14.html" class="date-card">
-          <div class="date-card-left">
-            <div class="date-card-date">2026年3月14日</div>
-            <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
-            <div class="date-card-tracks">
-              <span class="track-badge">时尚</span>
-              <span class="track-badge">穿搭</span>
-              <span class="track-badge">网球</span>
+            <div class="date-card-arrow">→</div>
+          </a>
+          <a href="daily/2026-03-14.html" class="date-card">
+            <div class="date-card-left">
+              <div class="date-card-date">2026年3月14日</div>
+              <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
+              <div class="date-card-tracks">
+                <span class="track-badge">时尚</span>
+                <span class="track-badge">穿搭</span>
+                <span class="track-badge">网球</span>
+              </div>
             </div>
-          </div>
-          <div class="date-card-arrow">→</div>
-        </a>
-        <a href="daily/2026-03-13.html" class="date-card">
-          <div class="date-card-left">
-            <div class="date-card-date">2026年3月13日</div>
-            <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
-            <div class="date-card-tracks">
-              <span class="track-badge">时尚</span>
-              <span class="track-badge">穿搭</span>
-              <span class="track-badge">网球</span>
+            <div class="date-card-arrow">→</div>
+          </a>
+          <a href="daily/2026-03-13.html" class="date-card">
+            <div class="date-card-left">
+              <div class="date-card-date">2026年3月13日</div>
+              <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
+              <div class="date-card-tracks">
+                <span class="track-badge">时尚</span>
+                <span class="track-badge">穿搭</span>
+                <span class="track-badge">网球</span>
+              </div>
             </div>
-          </div>
-          <div class="date-card-arrow">→</div>
-        </a></div>
+            <div class="date-card-arrow">→</div>
+          </a></div>
+    </div>
+
     <script>
     const AVAILABLE_DATES = ["2026-03-15", "2026-03-14", "2026-03-13"];
     </script>
@@ -69,5 +81,89 @@
     <div class="container">XHS Daily Insights · 数据来源 xiaohongshu-mcp · 仅供学习研究</div>
   </footer>
   <script src="assets/main.js"></script>
+  <script>
+  // Mini Calendar
+  (function() {
+    const cal = document.getElementById('mini-calendar');
+    const today = new Date();
+    let viewYear = today.getFullYear();
+    let viewMonth = today.getMonth(); // 0-indexed
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function dateStr(y, m, d) { return y + '-' + pad(m+1) + '-' + pad(d); }
+    const todayStr = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
+
+    function renderCalendar(year, month) {
+      const monthNames = ['January','February','March','April','May','June',
+        'July','August','September','October','November','December'];
+      const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+
+      let html = '<div class="cal-header">';
+      html += '<button class="cal-nav-btn" id="cal-prev">‹</button>';
+      html += '<span class="cal-month-label">' + monthNames[month] + ' ' + year + '</span>';
+      html += '<button class="cal-nav-btn" id="cal-next">›</button>';
+      html += '</div>';
+      html += '<div class="cal-grid">';
+      // Day names (Sun-Sat)
+      ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+        html += '<div class="cal-day-name">' + d + '</div>';
+      });
+      // Empty cells
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div class="cal-day empty"></div>';
+      }
+      // Days
+      for (let d = 1; d <= daysInMonth; d++) {
+        const ds = dateStr(year, month, d);
+        const isToday = ds === todayStr;
+        const hasContent = AVAILABLE_DATES.includes(ds);
+        let cls = 'cal-day';
+        if (hasContent) cls += ' has-content';
+        if (isToday) cls += ' today';
+        const nav = hasContent ? ' onclick="location.href=\'daily/' + ds + '.html\'"' : '';
+        html += '<div class="' + cls + '"' + nav + '>' + d + '</div>';
+      }
+      html += '</div>';
+      cal.innerHTML = html;
+
+      document.getElementById('cal-prev').onclick = function() {
+        viewMonth--;
+        if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+        renderCalendar(viewYear, viewMonth);
+      };
+      document.getElementById('cal-next').onclick = function() {
+        viewMonth++;
+        if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+        renderCalendar(viewYear, viewMonth);
+      };
+    }
+
+    renderCalendar(viewYear, viewMonth);
+  })();
+
+  // Today content injection
+  (function() {
+    const today = new Date();
+    function pad(n) { return String(n).padStart(2, '0'); }
+    const todayStr = today.getFullYear() + '-' + pad(today.getMonth()+1) + '-' + pad(today.getDate());
+
+    if (!AVAILABLE_DATES.includes(todayStr)) return;
+
+    const dailyUrl = 'daily/' + todayStr + '.html';
+    document.getElementById('today-full-link').href = dailyUrl;
+
+    fetch(dailyUrl)
+      .then(r => r.text())
+      .then(html => {
+        const match = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+        if (!match) return;
+        document.getElementById('today-content').innerHTML = match[1];
+        document.getElementById('today-content-wrapper').style.display = '';
+        document.getElementById('fallback-content').style.display = 'none';
+      })
+      .catch(() => { /* fallback stays visible */ });
+  })();
+  </script>
 </body>
 </html>
