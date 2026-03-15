@@ -359,7 +359,8 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
     (function() {{
       const DATES = [{dates_js}];
       const dateSet = new Set(DATES);
-      let calDate = new Date();
+      const pageDate = '{date_str}';
+      let calDate = new Date(pageDate + 'T00:00:00');
       function render() {{
         const year = calDate.getFullYear(), month = calDate.getMonth();
         const firstDay = new Date(year, month, 1).getDay();
@@ -373,9 +374,13 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
           const pad = String(d).padStart(2,'0'), padM = String(month+1).padStart(2,'0');
           const ds = year + '-' + padM + '-' + pad;
           const isToday = ds === todayStr;
+          const isPage = ds === pageDate;
+          let cls = 'cal-day';
+          if (isPage) cls += ' viewing';
+          if (isToday && !isPage) cls += ' today-mark';
           html += dateSet.has(ds)
-            ? '<a href="../daily/' + ds + '.html" class="cal-day has-content' + (isToday ? ' today-mark' : '') + '">' + d + '</a>'
-            : '<div class="cal-day' + (isToday ? ' today-mark' : '') + '">' + d + '</div>';
+            ? '<a href="../daily/' + ds + '.html" class="' + cls + ' has-content">' + d + '</a>'
+            : '<div class="' + cls + '">' + d + '</div>';
         }}
         document.getElementById('calSidebar').innerHTML = html + '</div>';
       }}
