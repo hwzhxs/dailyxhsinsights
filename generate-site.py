@@ -309,6 +309,11 @@ def track_panel_html(track_name: str, track_data: dict) -> str:
     notes_html = "".join(note_card_html(n, track_name, i) for i, n in enumerate(track_data.get("notes", [])))
     meth = track_data.get("methodology", [])
     meth_items = "".join(f"<li>{esc(m)}</li>" for m in meth)
+    meth_block = f'''
+          <div class="methodology">
+            <h3>{esc(track_name)}赛道今日方法论</h3>
+            <ul>{meth_items}</ul>
+          </div>''' if meth else ""
 
     return f'''
         <div class="tab-panel" id="tab-{tab_id}">
@@ -318,10 +323,7 @@ def track_panel_html(track_name: str, track_data: dict) -> str:
             <strong>竞品策略变化：</strong>{esc(meta.get("competitor","—"))}
           </div>
           <div class="notes-grid">{notes_html}</div>
-          <div class="methodology">
-            <h3>{esc(track_name)}赛道今日方法论</h3>
-            <ul>{meth_items}</ul>
-          </div>
+          {meth_block}
         </div>'''
 
 
