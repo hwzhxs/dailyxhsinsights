@@ -13,6 +13,8 @@ import os
 import sys
 import argparse
 import subprocess
+import hashlib
+import urllib.request
 from datetime import datetime, date
 from pathlib import Path
 
@@ -48,6 +50,28 @@ HTML_FOOT = '''  </div></main>
 def esc(s: str) -> str:
     """Escape HTML special chars."""
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def cache_cover(url: str, site_dir: Path) -> str:
+    """Download a CDN cover image to assets/covers/ and return the relative path.
+    Returns empty string if download fails."""
+    if not url:
+        return ""
+    covers_dir = site_dir / "assets" / "covers"
+    covers_dir.mkdir(parents=True, exist_ok=True)
+    # Use a stable hash of the URL as filename; preserve extension hint
+    ext = ".webp"
+    fname = hashlib.md5(url.encode()).hexdigest() + ext
+    fpath = covers_dir / fname
+    if not fpath.exists():
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.xiaohongshu.com/"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                fpath.write_bytes(resp.read())
+        except Exception as e:
+            print(f"  [warn] cover download failed: {e} — {url[:80]}", file=sys.stderr)
+            return ""
+    return f"../assets/covers/{fname}"
 
 
 # ─── Markdown Parser ──────────────────────────────────────────────────────────
@@ -242,7 +266,7 @@ CAL_SCRIPT = '''  <script>
   </script>'''
 
 
-def note_card_html(note: dict, track: str, i: int) -> str:
+def note_card_html(note: dict, track: str, i: int, site_dir: Path = None) -> str:
 
 
     stats = note["stats"]
@@ -266,7 +290,9 @@ def note_card_html(note: dict, track: str, i: int) -> str:
 
     # Cover image or placeholder
     cover_url = note.get("cover_url", "")
-    cover_html = f'<img class="note-cover" src="{esc(cover_url)}" alt="封面" loading="lazy">' if cover_url else ''
+    local_cover = cache_cover(cover_url, site_dir) if site_dir else ""
+    display_src = local_cover if local_cover else esc(cover_url)
+    cover_html = f'<img class="note-cover" src="{display_src}" alt="封面" loading="lazy">' if display_src else ''
 
     # Alternating card class
     alt_class = " note-card-alt" if i % 2 == 1 else ""
@@ -292,10 +318,10 @@ def note_card_html(note: dict, track: str, i: int) -> str:
     </div>'''
 
 
-def track_panel_html(track_name: str, track_data: dict) -> str:
+def track_panel_html(track_name: str, track_data: dict, site_dir: Path = None) -> str:
     tab_id = TRACK_IDS[track_name]
     meta = track_data.get("meta", {})
-    notes_html = "".join(note_card_html(n, track_name, i) for i, n in enumerate(track_data.get("notes", [])))
+    notes_html = "".join(note_card_html(n, track_name, i, site_dir) for i, n in enumerate(track_data.get("notes", [])))
     meth = track_data.get("methodology", [])
     meth_items = "".join(f"<li>{esc(m)}</li>" for m in meth)
     meth_block = f'''
@@ -316,7 +342,7 @@ def track_panel_html(track_name: str, track_data: dict) -> str:
         </div>'''
 
 
-def build_daily_page(report: dict, all_dates: list = None) -> str:
+def build_daily_page(report: dict, all_dates: list = None, site_dir: Path = None) -> str:
     date_str = report["date"]
     try:
         d = datetime.strptime(date_str, "%Y-%m-%d")
@@ -330,7 +356,7 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
     )
 
     panels = "".join(
-        track_panel_html(t, report["tracks"][t])
+        track_panel_html(t, report["tracks"][t], site_dir)
         for i, t in enumerate(TRACKS) if t in report["tracks"]
     )
     # Set first panel active
@@ -419,7 +445,7 @@ def build_daily_page(report: dict, all_dates: list = None) -> str:
     )
 
     panels = "".join(
-        track_panel_html(t, report["tracks"][t])
+        track_panel_html(t, report["tracks"][t], site_dir)
         for i, t in enumerate(TRACKS) if t in report["tracks"]
     )
     # Set first panel active
@@ -542,7 +568,7 @@ def main():
         for md_file in md_files:
             print(f"Building {md_file.name}...")
             report = parse_report(md_file)
-            html = build_daily_page(report, all_dates=[f.stem for f in md_files])
+            html = build_daily_page(report, all_dates=[f.stem for f in md_files], site_dir=SITE_DIR)
             out = DAILY_DIR / f"{md_file.stem}.html"
             out.write_text(html, encoding="utf-8")
             dates_built.append(md_file.stem)
@@ -560,7 +586,7 @@ def main():
         existing = [p.stem for p in DAILY_DIR.glob("????-??-??.html")]
         if args.date not in existing:
             existing.append(args.date)
-        html = build_daily_page(report, all_dates=existing)
+        html = build_daily_page(report, all_dates=existing, site_dir=SITE_DIR)
         out = DAILY_DIR / f"{args.date}.html"
         out.write_text(html, encoding="utf-8")
         idx = build_index(existing)
