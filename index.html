@@ -45,6 +45,18 @@
       <p class="date-label">按日期倒序 · 自动更新</p>
     </div>
     <div class="date-grid">
+        <a href="daily/2026-03-23.html" class="date-card">
+          <div class="date-card-left">
+            <div class="date-card-date">2026年3月23日</div>
+            <div class="date-card-meta">时尚 · 穿搭 · 网球 · 每日分析报告</div>
+            <div class="date-card-tracks">
+              <span class="track-badge">时尚</span>
+              <span class="track-badge">穿搭</span>
+              <span class="track-badge">网球</span>
+            </div>
+          </div>
+          <div class="date-card-arrow">→</div>
+        </a>
         <a href="daily/2026-03-22.html" class="date-card">
           <div class="date-card-left">
             <div class="date-card-date">2026年3月22日</div>
@@ -130,7 +142,7 @@
           <div class="date-card-arrow">→</div>
         </a></div>
     <script>
-    const AVAILABLE_DATES = ["2026-03-22", "2026-03-21", "2026-03-20", "2026-03-16", "2026-03-15", "2026-03-14", "2026-03-13"];
+    const AVAILABLE_DATES = ["2026-03-23", "2026-03-22", "2026-03-21", "2026-03-20", "2026-03-16", "2026-03-15", "2026-03-14", "2026-03-13"];
     </script>
   </div></main>
   <footer class="site-footer">
@@ -138,7 +150,7 @@
   </footer>
   <script src="assets/main.js"></script>
   <script>
-    const AVAILABLE_DATES_CAL = ["2026-03-22", "2026-03-21", "2026-03-20", "2026-03-16", "2026-03-15", "2026-03-14", "2026-03-13"];
+    const AVAILABLE_DATES_CAL = ["2026-03-23", "2026-03-22", "2026-03-21", "2026-03-20", "2026-03-16", "2026-03-15", "2026-03-14", "2026-03-13"];
     const dateSet = new Set(AVAILABLE_DATES_CAL);
     const todayStr = new Date().toISOString().slice(0, 10);
     if (dateSet.has(todayStr)) { window.location.replace("daily/" + todayStr + ".html"); }
